@@ -33,3 +33,12 @@ Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS 
 | Kali Linux	| Endpoint & IDS Sensor
 | VirtualBox	| Lab Virtualization
 | Linux CLI	| Installation & Configuration
+
+## Skills Demonstrated
+- SIEM Deployment
+- Endpoint Monitoring
+- Network Intrusion Detection
+- Linux Administration
+- Threat Hunting
+- Log Analysis
+- IDS Rule Configuration
