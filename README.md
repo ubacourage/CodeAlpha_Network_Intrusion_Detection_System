@@ -25,10 +25,11 @@ Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS 
 - Detect and investigate network events through Threat Hunting.
 
 ## Tools Used
-| Tool	| Purpose |
-| Wazuh	| SIEM Platform |
-Suricata	Network Intrusion Detection System
-Ubuntu 22.04	Wazuh Manager
-Kali Linux	Endpoint & IDS Sensor
-VirtualBox	Lab Virtualization
-Linux CLI	Installation & Configuratio
+| Tool	              | Purpose |
+|------------------|----------------------------|
+| Wazuh	             | SIEM Platform |
+| Suricata	|Network Intrusion Detection System 
+| Ubuntu 22.04	| Wazuh Manager
+| Kali Linux	| Endpoint & IDS Sensor
+| VirtualBox	| Lab Virtualization
+| Linux CLI	| Installation & Configuration
