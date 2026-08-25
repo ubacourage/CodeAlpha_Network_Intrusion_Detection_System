@@ -16,3 +16,19 @@ Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS 
 | Ubuntu 22.04	| Wazuh Manager |
 | Kali Linux	  | Wazuh Agent + Suricata IDS |
 | VirtualBox    |	Virtual Lab Environment | 
+
+## Project Objectives
+- Deploy a Wazuh SIEM server.
+- Configure Kali Linux as a monitored endpoint.
+- Install and configure Suricata IDS.
+- Integrate Suricata alerts into Wazuh.
+- Detect and investigate network events through Threat Hunting.
+
+## Tools Used
+| Tool	| Purpose |
+| Wazuh	| SIEM Platform |
+Suricata	Network Intrusion Detection System
+Ubuntu 22.04	Wazuh Manager
+Kali Linux	Endpoint & IDS Sensor
+VirtualBox	Lab Virtualization
+Linux CLI	Installation & Configuratio
