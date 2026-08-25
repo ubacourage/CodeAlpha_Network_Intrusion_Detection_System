@@ -10,8 +10,8 @@ Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS 
 
 ## Lab Architecture
 
-Environment
-Virtual Machine	  Role
-Ubuntu 22.04	Wazuh Manager
-Kali Linux	Wazuh Agent + Suricata IDS
-VirtualBox	Virtual Lab Environme
+### Environment
+| Virtual Machine	    | Role |
+| Ubuntu 22.04	Wazuh Manager
+| Kali Linux	Wazuh Agent + Suricata IDS
+| VirtualBox	Virtual Lab Environme
