@@ -8,11 +8,14 @@ The objective was to simulate a Security Operations Center (SOC) environment cap
 
 Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS with Wazuh to provide real-time intrusion detection and centralized security monitoring.
 
+This project was completed as part of the CodeAlpha Cybersecurity Internship.
+
 ## Project Objectives
-- Detect suspicious or malicious network activity in real time
+- Detect suspicious or malicious network activity in real time.
 - Integrate Suricata alerts into Wazuh.
-- Automatically respond to detected intrusions (active response)
-- Visualize alerts and attack activity on a centralized dashboard
+- Configure and tune detection rules for accurate alerting.
+- Automatically respond to detected intrusions (active response).
+- Visualize alerts and attack activity on a centralized dashboard.
   
 ## Lab Architecture
 
@@ -24,9 +27,15 @@ Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS 
 | VirtualBox    |	Virtual Lab Environment | 
 
 **Data flow:**
-Suricata detects traffic → writes alerts to `eve.json` → Wazuh Agent 
-forwards alerts → Wazuh Manager applies custom rules → Active Response 
-triggers `firewall-drop` → Alert & block event visualized on Dashboard.
+Suricata (Kali) → detects traffic → writes alerts to eve.json
+↓
+Wazuh Agent (Kali) → forwards alerts to Wazuh Manager
+↓
+Wazuh Manager (Ubuntu) → applies custom detection rules → correlates alerts
+↓
+Active Response → automatically blocks malicious source IP (firewall-drop)
+↓
+Wazuh Dashboard → visualizes alerts, severity, and response actions
 
 ## Tools Used
 | Tool	              | Purpose |
