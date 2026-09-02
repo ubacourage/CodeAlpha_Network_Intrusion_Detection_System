@@ -1,12 +1,12 @@
-# Network Intrusion Detection System using Wazuh & Suricata
+# Network Intrusion Detection System (NIDS) with Wazuh and Suricata
 
 ## Overview
 
 This project documents the design and implementation of a Network Intrusion Detection System (NIDS) using Wazuh and Suricata in a virtual cybersecurity lab built with VirtualBox.
 
-The objective was to simulate a Security Operations Center (SOC) environment capable of monitoring endpoint activity, detecting suspicious network traffic, and visualizing security alerts through the Wazuh Dashboard.
+The objective was to build a virtual Security Operations Center (SOC) environment capable of monitoring endpoint activity, detecting suspicious network traffic, correlating security events, and visualizing alerts through the Wazuh Dashboard.
 
-Unlike a traditional SIEM-only deployment, this project integrates Suricata IDS with Wazuh to provide real-time intrusion detection and centralized security monitoring.
+Rather than deploying a standalone SIEM, this project integrates the Suricata Network Intrusion Detection System (NIDS) with Wazuh to provide centralized security monitoring and real-time intrusion detection.
 
 This project was completed as part of the CodeAlpha Cybersecurity Internship.
 
@@ -28,23 +28,28 @@ This project was completed as part of the CodeAlpha Cybersecurity Internship.
 
 **Data flow:**
 
-Suricata (Kali) → detects traffic → writes alerts to eve.json 
-
-  ↓
-
-Wazuh Agent (Kali) → forwards alerts to Wazuh Manager
-
-  ↓
-
-Wazuh Manager (Ubuntu) → applies custom detection rules → correlates alerts
-
-  ↓
-
-Active Response → automatically blocks malicious source IP (firewall-drop)
-
- ↓
-
-Wazuh Dashboard → visualizes alerts, severity, and response actions
+Suricata (Kali)
+        │
+        ▼
+Detects suspicious network traffic and writes alerts to `eve.json`
+        │
+        ▼
+Wazuh Agent (Kali)
+        │
+        ▼
+Forwards Suricata alerts to Wazuh Manager
+        │
+        ▼
+Wazuh Manager (Ubuntu)
+        │
+        ▼
+Correlates events and applies custom detection rules
+        │
+        ▼
+Active Response (`firewall-drop`)
+        │
+        ▼
+Wazuh Dashboard visualizes alerts and response actions
 
 
 
@@ -64,21 +69,22 @@ Wazuh Dashboard → visualizes alerts, severity, and response actions
 - Endpoint Monitoring
 - Network Intrusion Detection
 - Linux Administration
-- Threat Hunting
+- Threat Detection & Alert Correlation
 - Log Analysis
 - IDS Rule Configuration
+- Active Response Configuration
 
 ## 📂 Repository Structure
-'''bash
+```text
 ├── README.md
 ├── config/
-│ ├── manager/
-│ │ ├── ossec.conf # Wazuh Manager configuration (incl. active-response)
-│ │ └── local_rules.xml # Custom Wazuh detection rule
-│ └── agent/
-│ └── ossec.conf # Wazuh Agent configuration (incl. Suricata log ingestion)
-└── screenshots/ # Step-by-step evidence of setup, detection, and response
-'''
+│   ├── manager/
+│   │   ├── ossec.conf
+│   │   └── local_rules.xml
+│   └── agent/
+│       └── ossec.conf
+└── screenshots/
+```
 
 ## ⚙️ Implementation Steps
 
@@ -93,6 +99,12 @@ package updates:
 ```bash
 sudo sed -i "s/^deb /#deb /" /etc/apt/sources.list.d/wazuh.list && sudo apt update
 ```
+
+### 2. Wazuh Agent Deployment (Kali)
+- Installed and deployed the Wazuh Agent on Kali
+- Registered the agent to the Wazuh Manager running on Ubuntu
+- Confirmed agent connectivity from the Wazuh dashboard
+  
 ### 3. Suricata Installation & Rule Configuration
 
 **Installed Suricata via the official stable PPA:**
@@ -126,12 +138,13 @@ sudo nano /etc/suricata/suricata.yaml
 ```
 
 Key configuration changes made:
-- Set `HOME_NET` to the local machine's IP address (the monitored host), 
-  and left `EXTERNAL_NET` as `any` to detect traffic from any external source
+- Set HOME_NET to the IP address (or subnet) of the monitored network
+  and left EXTERNAL_NET as any so Suricata could identify traffic originating
+  outside the monitored environment.
 - Set `default-rule-path` and confirmed `rule-files: - "*.rules"` so 
   Suricata loads all rule files from that path
-- Confirmed the network interface to monitor was set to `eth0` (default 
-  interface on the VM)
+- Confirmed the correct network interface for the Kali VM (eth0 in this lab environment)
+  was configured for packet inspection.
 
 - During configuration, also corrected a `default-rule-path` misconfiguration that
   initially pointed to the raw rules directory instead of the merged ruleset 
@@ -150,7 +163,9 @@ sudo suricata -T -c /etc/suricata/suricata.yaml -v
 By default, all Suricata alerts are ingested under a single generic 
 Wazuh rule (`86601`), regardless of severity. A custom rule was added 
 ([`config/manager/local_rules.xml`](./config/manager/local_rules.xml)) 
-to specifically identify and escalate port-scan activity:
+to specifically identify and escalate port-scan activity. The rule matches 
+Suricata scan signatures (ET SCAN) and increases the alert severity
+from the default Suricata rule to a higher-priority Wazuh alert:
 
 ```xml
 <group name="local,syslog,suricata,">
@@ -166,8 +181,8 @@ to specifically identify and escalate port-scan activity:
 ### 6. Active Response (Automated Intrusion Response)
 Configured within the Wazuh Manager 
 ([`config/manager/ossec.conf`](./config/manager/ossec.conf)) to 
-automatically block the source IP of any traffic matching the custom 
-scan-detection rule:
+Automatically block the source IP address using Wazuh's built-in 
+firewall-drop active response command for 600 seconds:
 
 ```xml
 <command>
@@ -193,9 +208,9 @@ scan-detection rule:
   level 10 alerts, distinguishing them from informational noise
 - Active response (`firewall-drop`, rule `651`) triggered automatically, 
   blocking the attacking IP via `iptables`
-- Confirmed the block was in effect — subsequent connection attempts 
+-Verified that the attacking IP address was temporarily blocked — subsequent connection attempts 
   from the attacker IP failed — and that it auto-expired after the 
-  configured 10-minute timeout
+  configured 600-second timeout
 
 ## 📸 Screenshots
 Step-by-step evidence of the setup and testing process is available in 
@@ -206,13 +221,24 @@ Step-by-step evidence of the setup and testing process is available in
 - ICMP ping and Nmap scan detection
 - Active response (automated IP block) in action
 
+## Key Learning Outcomes
+
+Throughout this project, I learned how to:
+
+- Deploy and configure Wazuh Manager and Agent in a virtual environment.
+- Integrate Suricata with Wazuh using `eve.json`.
+- Create and tune custom Wazuh detection rules.
+- Configure automated active response using `firewall-drop`.
+- Validate detections through ICMP and Nmap-based attack simulations.
+- Investigate alerts through the Wazuh Dashboard.
+
 ## ✅ Conclusion
-This project demonstrates a functional, end-to-end network intrusion 
-detection and automated response pipeline — from raw traffic capture 
-through detection, alert correlation, and real-time mitigation. It 
-reflects core SOC (Security Operations Center) workflows used in 
-real-world environments, combining a signature-based IDS with a SIEM 
-platform to move from passive monitoring to active, automated defense.
+This project demonstrates the deployment of a functional Network Intrusion Detection System (NIDS) integrated with a Security Information and Event Management (SIEM) platform in a virtual SOC lab.
+
+By combining Suricata's signature-based intrusion detection capabilities with Wazuh's log analysis, alert correlation, dashboard visualization, and active response engine, the lab provides an end-to-end workflow from network traffic monitoring to automated threat mitigation.
+
+The project reflects practical SOC analyst skills, including IDS configuration, rule tuning, endpoint monitoring, log analysis, alert investigation, and automated incident response in a Linux-based environment.
+
 
 ## 🔗 About
 Completed as part of the **CodeAlpha Cybersecurity Internship**.
