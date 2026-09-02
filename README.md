@@ -1,3 +1,5 @@
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu) ![Wazuh](https://img.shields.io/badge/Wazuh-SIEM-0265C0) ![Suricata](https://img.shields.io/badge/Suricata-IDS-red) ![VirtualBox](https://img.shields.io/badge/VirtualBox-Lab-183A61) ![Linux](https://img.shields.io/badge/Linux-Security-yellow?logo=linux) ![Status](https://img.shields.io/badge/Project-Completed-brightgreen)
+
 # Network Intrusion Detection System (NIDS) with Wazuh and Suricata
 
 ## Overview
