@@ -85,7 +85,7 @@ Wazuh Dashboard visualizes alerts and response actions
 │   │   └── local_rules.xml
 │   └── agent/
 │       └── ossec.conf
-└── screenshots/
+└── screenshots
 ```
 
 ## ⚙️ Implementation Steps
